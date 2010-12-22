@@ -156,6 +156,9 @@ class EdifyGenerator(object):
            ");")
     self.script.append(self.WordWrap(cmd))
 
+  def RunBackup(self, command):
+    self.script.append(('run_program("/tmp/install/bin/backuptool.sh", "%s");' % command))
+
   def ShowProgress(self, frac, dur):
     """Update the progress bar, advancing it over 'frac' over the next
     'dur' seconds.  'dur' may be zero to advance it via SetProgress
@@ -228,6 +231,12 @@ class EdifyGenerator(object):
           p.mount_point, mount_flags))
       self.mounts.add(p.mount_point)
 
+  def Unmount(self, mount_point):
+    """Unmount the partition with the given mount_point."""
+    if mount_point in self.mounts:
+      self.mounts.remove(mount_point)
+      self.script.append('unmount("%s");' % (mount_point,))
+
   def UnpackPackageDir(self, src, dst):
     """Unpack a given directory from the OTA package into the given
     destination directory."""
@@ -244,16 +253,12 @@ class EdifyGenerator(object):
     """Log a message to the screen (if the logs are visible)."""
     self.script.append('ui_print("%s");' % (message,))
 
-  def PrintPixelExperienceBanner(self, is_plus, android_version, build_id, build_date,
+  def PrintGabutersBanner(self, android_version, build_id, build_date,
                                   security_patch, device, prev_build_id=None,
                                   prev_build_date=None, prev_security_patch=None):
     self.Print("----------------------------------------------")
-    if is_plus:
-      self.Print("        PixelExperience (Plus edition)")
-      self.Print("                by jhenrique09")
-    else:
-      self.Print("              PixelExperience")
-      self.Print("              by jhenrique09")
+    self.Print("              GABUTERS-Project")
+    self.Print("               by GabutersTeam")
     self.Print("----------------------------------------------")
     self.Print(" Android version: %s"%(android_version))
     if prev_build_id != None and prev_build_id != build_id:
@@ -455,8 +460,8 @@ class EdifyGenerator(object):
   def RunUmountAll(self):
     self.script.append('run_program("/sbin/sh", "/tmp/install/bin/umount_all.sh");')
 
-  def AddPixelExperienceVersionAssertion(self, error_msg, source_version):
+  def AddGabutersVersionAssertion(self, error_msg, source_version):
     prop_path = "/system_root/system/build.prop"
-    source_version_prop = "org.pixelexperience.version.display"
+    source_version_prop = "org.gabuters.version.display"
     self.script.append('assert(try_file_getprop("%s", "%s") == "%s" || abort("%s"));' % (prop_path, source_version_prop, source_version, error_msg))
 

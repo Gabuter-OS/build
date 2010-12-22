@@ -187,6 +187,10 @@ A/B OTA specific options
 
   --override_device <device>
       Override device-specific asserts. Can be a comma-separated list.
+
+  --backup <boolean>
+      Enable or disable the execution of backuptool.sh.
+      Disabled by default.
 """
 
 from __future__ import print_function
@@ -247,6 +251,7 @@ OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.skip_compatibility_check = False
 OPTIONS.output_metadata_path = None
 OPTIONS.override_device = 'auto'
+OPTIONS.backuptool = False
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
@@ -1008,21 +1013,27 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     # Stage 3/3: Make changes.
     script.Comment("Stage 3/3")
 
-  is_plus = target_info.GetBuildProp("org.gabuters.version").endswith("_plus")
   android_version = target_info.GetBuildProp("ro.build.version.release")
   build_id = target_info.GetBuildProp("ro.build.id")
   build_date = target_info.GetBuildProp("org.gabuters.build_date")
   security_patch = target_info.GetBuildProp("ro.build.version.security_patch")
   device = target_info.GetBuildProp("org.gabuters.device")
-  script.PrintGabutersBanner(is_plus, android_version, build_id, build_date,
+  script.PrintGabutersBanner(android_version, build_id, build_date,
                                   security_patch, device)
 
   device_specific.FullOTA_InstallBegin()
 
   CopyInstallTools(output_zip)
   script.UnpackPackageDir("install", "/tmp/install")
-  script.SetPermissionsRecursive("/tmp/install", 0, 0, 0o755, 0o644, None, None)
-  script.SetPermissionsRecursive("/tmp/install/bin", 0, 0, 0o755, 0o755, None, None)
+  script.SetPermissionsRecursive("/tmp/install", 0, 0, 0755, 0644, None, None)
+  script.SetPermissionsRecursive("/tmp/install/bin", 0, 0, 0755, 0755, None, None)
+
+  if OPTIONS.backuptool:
+    script.Mount("/system")
+    script.RunBackup("backup")
+    script.Unmount("/system")
+
+  system_progress = 0.75
 
   # All other partitions as well as the data wipe use 10% of the progress, and
   # the update of the system partition takes the remaining progress.
@@ -1055,6 +1066,13 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   device_specific.FullOTA_PostValidate()
 
+  if OPTIONS.backuptool:
+    script.ShowProgress(0.02, 10)
+    script.Mount("/system")
+    script.RunBackup("restore")
+    script.Unmount("/system")
+
+  script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")
 
   script.ShowProgress(0.1, 10)
@@ -1625,7 +1643,6 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   target_info.WriteDeviceAssertions(script, OPTIONS.oem_no_mount)
   device_specific.IncrementalOTA_Assertions()
 
-  is_plus = target_info.GetBuildProp("org.gabuters.version").endswith("_plus")
   android_version = target_info.GetBuildProp("ro.build.version.release")
   build_id = target_info.GetBuildProp("ro.build.id")
   build_date = target_info.GetBuildProp("org.gabuters.build_date")
@@ -1634,7 +1651,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   prev_build_id = source_info.GetBuildProp("ro.build.id")
   prev_build_date = source_info.GetBuildProp("org.gabuters.build_date")
   prev_security_patch = source_info.GetBuildProp("ro.build.version.security_patch")
-  script.PrintGabutersBanner(is_plus, android_version, build_id, build_date,
+  script.PrintGabutersBanner(android_version, build_id, build_date,
                                   security_patch, device, prev_build_id,
                                   prev_build_date, prev_security_patch)
 
@@ -1797,7 +1814,6 @@ def WriteFileIncrementalOTAPackage(target_zip, source_zip, output_file):
   target_info.WriteDeviceAssertions(script, OPTIONS.oem_no_mount)
   device_specific.IncrementalOTA_Assertions()
 
-  is_plus = target_info.GetBuildProp("org.gabuters.version").endswith("_plus") 
   android_version = target_info.GetBuildProp("ro.build.version.release")
   build_id = target_info.GetBuildProp("ro.build.id")
   build_date = target_info.GetBuildProp("org.gabuters.build_date")
@@ -1806,7 +1822,7 @@ def WriteFileIncrementalOTAPackage(target_zip, source_zip, output_file):
   prev_build_id = source_info.GetBuildProp("ro.build.id")
   prev_build_date = source_info.GetBuildProp("org.gabuters.build_date")
   prev_security_patch = source_info.GetBuildProp("ro.build.version.security_patch")
-  script.PrintGabutersBanner(is_plus, android_version, build_id, build_date,
+  script.PrintGabutersBanner(android_version, build_id, build_date,
                                   security_patch, device, prev_build_id,
                                   prev_build_date, prev_security_patch)
 
@@ -2260,6 +2276,8 @@ def main(argv):
       OPTIONS.output_metadata_path = a
     elif o in ("--override_device"):
       OPTIONS.override_device = a
+    elif o in ("--backup"):
+      OPTIONS.backuptool = bool(a.lower() == 'true')
     else:
       return False
     return True
@@ -2296,6 +2314,7 @@ def main(argv):
                                  "skip_compatibility_check",
                                  "output_metadata_path=",
                                  "override_device=",
+                                 "backup=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
