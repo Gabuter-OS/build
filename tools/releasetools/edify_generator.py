@@ -156,8 +156,12 @@ class EdifyGenerator(object):
            ");")
     self.script.append(self.WordWrap(cmd))
 
-  def RunBackup(self, command):
-    self.script.append(('run_program("/tmp/install/bin/backuptool.sh", "%s");' % command))
+  def RunBackup(self, command, mount_point):
+    fstab = self.fstab
+    if fstab:
+      p = fstab[mount_point]
+    self.script.append(('run_program("/tmp/install/bin/backuptool.sh", "%s", "%s");' % (
+        command, p.device)))
 
   def ShowProgress(self, frac, dur):
     """Update the progress bar, advancing it over 'frac' over the next
@@ -254,8 +258,8 @@ class EdifyGenerator(object):
     self.script.append('ui_print("%s");' % (message,))
 
   def PrintGabutersBanner(self, android_version, build_id, build_date,
-                                  security_patch, device, prev_build_id=None,
-                                  prev_build_date=None, prev_security_patch=None):
+                          security_patch, device, prev_build_id=None,
+                          prev_build_date=None, prev_security_patch=None):
     self.Print("----------------------------------------------")
     self.Print("              GABUTERS-Project")
     self.Print("               by GabutersTeam")
