@@ -295,8 +295,8 @@ include $(BUILD_SYSTEM)/envsetup.mk
 FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(SCAN_EXCLUDE_DIRS) .repo .git)
 
 -include vendor/extra/BoardConfigExtra.mk
-ifneq ($(CUSTOM_BUILD),)
-include vendor/aosp/config/BoardConfig.mk
+ifneq ($(GABUTERS_BUILD),)
+include vendor/gabuters/config/BoardConfig.mk
 endif
 
 # The build system exposes several variables for where to find the kernel
@@ -607,20 +607,20 @@ VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
 LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
-ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
+ifeq (,$(strip $(BOARD_GABUTERS_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
-MKBOOTIMG := $(BOARD_CUSTOM_MKBOOTIMG)
+MKBOOTIMG := $(BOARD_GABUTERS_MKBOOTIMG)
 endif
-ifeq (,$(strip $(BOARD_CUSTOM_BPTTOOL)))
+ifeq (,$(strip $(BOARD_GABUTERS_BPTTOOL)))
 BPTTOOL := $(HOST_OUT_EXECUTABLES)/bpttool$(HOST_EXECUTABLE_SUFFIX)
 else
-BPTTOOL := $(BOARD_CUSTOM_BPTTOOL)
+BPTTOOL := $(BOARD_GABUTERS_BPTTOOL)
 endif
-ifeq (,$(strip $(BOARD_CUSTOM_AVBTOOL)))
+ifeq (,$(strip $(BOARD_GABUTERS_AVBTOOL)))
 AVBTOOL := $(HOST_OUT_EXECUTABLES)/avbtool$(HOST_EXECUTABLE_SUFFIX)
 else
-AVBTOOL := $(BOARD_CUSTOM_AVBTOOL)
+AVBTOOL := $(BOARD_GABUTERS_AVBTOOL)
 endif
 APICHECK := $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
@@ -1233,7 +1233,7 @@ dont_bother_goals := out \
     vbmetaimage-nodeps \
     product-graph dump-products
 
-ifneq ($(CUSTOM_BUILD),)
+ifneq ($(GABUTERS_BUILD),)
 ifneq ($(wildcard device/custom/sepolicy/common/sepolicy.mk),)
 ## We need to be sure the global selinux policies are included
 ## last, to avoid accidental resetting by device configs

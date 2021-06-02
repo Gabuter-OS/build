@@ -476,14 +476,14 @@ $(call generate_all_enforce_rro_packages)
 endif
 
 # -------------------------------------------------------------------
-# Fix up CUSTOM_MODULES to refer to installed files rather than
+# Fix up GABUTERS_MODULES to refer to installed files rather than
 # just bare module names.  Leave unknown modules alone in case
 # they're actually full paths to a particular file.
-known_custom_modules := $(filter $(ALL_MODULES),$(CUSTOM_MODULES))
-unknown_custom_modules := $(filter-out $(ALL_MODULES),$(CUSTOM_MODULES))
-CUSTOM_MODULES := \
-	$(call module-installed-files,$(known_custom_modules)) \
-	$(unknown_custom_modules)
+known_GABUTERS_modules := $(filter $(ALL_MODULES),$(GABUTERS_MODULES))
+unknown_GABUTERS_modules := $(filter-out $(ALL_MODULES),$(GABUTERS_MODULES))
+GABUTERS_MODULES := \
+	$(call module-installed-files,$(known_GABUTERS_modules)) \
+	$(unknown_GABUTERS_modules)
 
 # -------------------------------------------------------------------
 # Define dependencies for modules that require other modules.
@@ -1264,7 +1264,7 @@ modules_to_install := $(sort \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
     $(product_target_FILES) \
     $(product_host_FILES) \
-    $(CUSTOM_MODULES) \
+    $(GABUTERS_MODULES) \
   )
 
 ifdef FULL_BUILD

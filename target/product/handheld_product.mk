@@ -35,7 +35,7 @@ PRODUCT_PACKAGES += \
     SettingsIntelligence \
     frameworks-base-overlays
 
-ifeq ($(CUSTOM_BUILD),)
+ifeq ($(GABUTERS_BUILD),)
 PRODUCT_PACKAGES += \
     LatinIME
 endif
