@@ -264,22 +264,22 @@ class EdifyGenerator(object):
     """Log a message to the screen (if the logs are visible)."""
     self.script.append('ui_print("%s");' % (message,))
 
-  def PrintPixelExperienceBanner(self, is_plus, android_version, build_id, build_date,
+  def GabutersBanner(self, android_version, build_id, build_date,
                                   security_patch, device):
-    self.Print("----------------------------------------------")
-    if is_plus:
-      self.Print("        PixelExperience (Plus edition)")
-      self.Print("                by jhenrique09")
-    else:
-      self.Print("              PixelExperience")
-      self.Print("              by jhenrique09")
-    self.Print("----------------------------------------------")
+    self.Print("   _________    ____  __  __________________  _____")
+    self.Print("  / ____/   |  / __ )/ / / /_  __/ ____/ __ \/ ___/")
+    self.Print(" / / __/ /| | / __  / / / / / / / __/ / /_/ /\__ \ ")
+    self.Print("/ /_/ / ___ |/ /_/ / /_/ / / / / /___/ _, _/___/ / ")
+    self.Print("\____/_/  |_/_____/\____/ /_/ /_____/_/ |_|/____/  ")
+    self.Print("---------------------------------------------------")
     self.Print(" Android version: %s"%(android_version))
     self.Print(" Build id: %s"%(build_id))
     self.Print(" Build date: %s"%(build_date))
     self.Print(" Security patch: %s"%(security_patch))
     self.Print(" Device: %s"%(device))
-    self.Print("----------------------------------------------")
+    self.Print(" ")
+    self.Print("                   Enjoy the ROM!                  ")
+    self.Print("---------------------------------------------------")
 
   def TunePartition(self, partition, *options):
     fstab = self.fstab
