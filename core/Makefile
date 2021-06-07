@@ -3405,7 +3405,7 @@ INTERNAL_AVB_CUSTOMIMAGES_SIGNING_ARGS :=
 # $(1): the prebuilt custom image.
 # $(2): the mount point of the prebuilt custom image.
 # $(3): the signed custom image target.
-define sign_GABUTERS_image
+define sign_gabuters_image
 $(3): $(1) $(INTERNAL_USERIMAGES_DEPS)
 	@echo Target custom image: $(3)
 	mkdir -p $(dir $(3))
@@ -3426,7 +3426,7 @@ endef
 
 $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
   $(foreach image,$(BOARD_AVB_$(call to-upper,$(partition))_IMAGE_LIST), \
-     $(eval $(call sign_GABUTERS_image,$(image),$(partition),$(PRODUCT_OUT)/$(notdir $(image))))))
+     $(eval $(call sign_gabuters_image,$(image),$(partition),$(PRODUCT_OUT)/$(notdir $(image))))))
 endif
 
 # -----------------------------------------------------------------
@@ -4374,7 +4374,7 @@ ifdef BOARD_AVB_RECOVERY_KEY_PATH
 	$(hide) echo "avb_recovery_rollback_index_location=$(BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_RECOVERY_KEY_PATH
 ifneq (,$(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)))
-	$(hide) echo "avb_GABUTERS_images_partition_list=$(BOARD_CUSTOMIMAGES_PARTITION_LIST)" >> $@
+	$(hide) echo "avb_gabuters_images_partition_list=$(BOARD_CUSTOMIMAGES_PARTITION_LIST)" >> $@
 	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
 	    echo "avb_$(partition)_key_path=$(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH)"  >> $@; \
 	    echo "avb_$(partition)_algorithm=$(BOARD_AVB_$(call to-upper,$(partition))_ALGORITHM)"  >> $@; \

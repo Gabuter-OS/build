@@ -264,7 +264,7 @@ class EdifyGenerator(object):
     """Log a message to the screen (if the logs are visible)."""
     self.script.append('ui_print("%s");' % (message,))
 
-  def GabutersBanner(self, android_version, build_id, build_date,
+  def PrintGabutersBanner(self, android_version, build_id, build_date,
                                   security_patch, device):
     self.Print("   _________    ____  __  __________________  _____")
     self.Print("  / ____/   |  / __ )/ / / /_  __/ ____/ __ \/ ___/")

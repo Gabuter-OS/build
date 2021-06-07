@@ -363,7 +363,7 @@ ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
 
 # ------------------------------------------------------------
 # Include vendor specific additions to build properties
--include vendor/aosp/build/core/main.mk
+-include vendor/gabuters/build/core/main.mk
 
 # ------------------------------------------------------------
 # Define a function that, given a list of module tags, returns
@@ -479,11 +479,11 @@ endif
 # Fix up GABUTERS_MODULES to refer to installed files rather than
 # just bare module names.  Leave unknown modules alone in case
 # they're actually full paths to a particular file.
-known_GABUTERS_modules := $(filter $(ALL_MODULES),$(GABUTERS_MODULES))
-unknown_GABUTERS_modules := $(filter-out $(ALL_MODULES),$(GABUTERS_MODULES))
+known_gabuters_modules := $(filter $(ALL_MODULES),$(gabuters_modules))
+unknown_gabuters_modules := $(filter-out $(ALL_MODULES),$(gabuters_modules))
 GABUTERS_MODULES := \
-	$(call module-installed-files,$(known_GABUTERS_modules)) \
-	$(unknown_GABUTERS_modules)
+	$(call module-installed-files,$(known_gabuters_modules)) \
+	$(unknown_gabuters_modules)
 
 # -------------------------------------------------------------------
 # Define dependencies for modules that require other modules.
